@@ -13,20 +13,20 @@ class ApiService {
     this.Url = Url.DefineBaseUrl(baseUrl);
   }
 
-  // Método estatico que instancia o objeto
+  // Static method that makes a new instance of object
   public static ApiService DefineBaseUrl(string baseUrl) {
 
     return new ApiService(baseUrl);
   }
 
-  // Método que constroi recursos
+  // Method that builds the resources on url
   public ApiService AddResource(string resource) {
     this.Url.AddResource(resource);
 
     return this;
   }
 
-  // Método que constroi query params
+  // Method that builds the query params
   public ApiService AddQueryParam(string queryParam, string value) {
     this.Url.AddQueryParam(queryParam, value);
 
@@ -39,20 +39,19 @@ class ApiService {
     return this;
   }
 
-  // Método que constroi route params
-  // Método que constroi headers
+  // Method that builds the headers
   public ApiService AddHeader(string field, string value) {
     this.Client.DefaultRequestHeaders.Add(field, value);
 
     return this;
   }
 
-  // Método que devolve o resultado final da requsição construída
+  // Mathod that print the log of the api 
   public void SendTest() {
     Console.WriteLine(this.Url);
   }
 
-  // Método Build
+  // Method Build
   public async Task<ResponseType> Send<ResponseType>() {
     string uri = this.Url.Build();
     string responseString = await this.Client.GetStringAsync(uri);
@@ -63,6 +62,7 @@ class ApiService {
   }
 
   public async Task<List<ResponseElementType>> SendRequestForManyPages<ResponseElementType>(int from, int until, string queryParam) {
+    // Generating the urls of all pages
     List<string> urls = new List<string>();
     var pages = Enumerable.Range(from, until);
 
@@ -75,17 +75,20 @@ class ApiService {
       urls.Add(url);
     }
 
+    // Making a list of requests
     List<Task<string>> requests = new List<Task<string>>();
 
+    // Initing the request task and add the request list
     urls.ForEach(delegate(string uri) {
       Task<string> request = this.Client.GetStringAsync(uri);
       requests.Add(request);
     });
 
+    // Awaiting the all requests
     var responsesApi = await Task.WhenAll(requests);
     List<ResponseElementType> data = new List<ResponseElementType>();
 
-    // Register List
+    // Deserialiazing the response
 
     foreach(string responseString in responsesApi) {
       List<ResponseElementType> deserialiazedResponse = JsonConvert.DeserializeObject<List<ResponseElementType>>(responseString);

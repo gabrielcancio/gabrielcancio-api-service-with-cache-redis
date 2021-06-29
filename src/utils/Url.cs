@@ -6,13 +6,13 @@ class Url {
     this.UrlString = url;
   }
 
-  // Método que deine a Url
+  // Method that define the Url
   public static Url DefineBaseUrl(string url) {
 
     return new Url(url);
   }
 
-  // Método que adicona recursos
+  // Method that adds resources
     public Url AddResource(string resource) {
     string resourceFormated = $"/{resource}";
     this.UrlString = string.Concat(this.UrlString, resourceFormated);
@@ -20,7 +20,7 @@ class Url {
     return this;
   }
 
-  // Métodos que adicionam query params
+  // Method that adds query params
   public Url AddQueryParam(string queryParam, string value) {
     this.performAddQueryParam(queryParam, value);
 
@@ -67,9 +67,7 @@ class Url {
     return this;
   }
 
-  // Métodos que adicionam routes params
-
-  // Método que devolve a string construída
+  // Method that return the built url
   public string Build()  {
     return UrlString;
   }
